@@ -48,7 +48,8 @@ The pipeline consists of the following key tasks:
 4. **Semantic definition:** Metrics and dimensions declared once in YAML.
 
 ### Bronze — managed connector ingestion
-
+Salesforce accounts and opportunities are ingested by Lakeflow Connect as streaming tables, with upserts applied on each run
+Product catalogue and inventory arrive from PostgreSQL through a CDC connection, with SCD Type 2 history maintained automatically.
 <table>
 <tr>
 <td width="50%"><img src="docs/images/salesforce_bronze.png" alt="Salesforce ingestion"></td>
