@@ -47,6 +47,19 @@ The pipeline consists of the following key tasks:
 3. **Gold modelling:** Fact table construction and dimension views.
 4. **Semantic definition:** Metrics and dimensions declared once in YAML.
 
+### Bronze — managed connector ingestion
+
+<table>
+<tr>
+<td width="50%"><img src="docs/images/salesforce_bronze.png" alt="Salesforce ingestion"></td>
+<td width="50%"><img src="docs/images/postgress_bronze.png" alt="PostgreSQL ingestion"></td>
+</tr>
+<tr>
+<td align="center"><em>Salesforce — Lakeflow Connect</em></td>
+<td align="center"><em>PostgreSQL — CDC with SCD Type 2</em></td>
+</tr>
+</table>
+
 ### Bronze — Auto Loader for transaction files
 
 Transaction CSVs land in a Unity Catalog volume. Auto Loader tracks which files have already been processed, so only new arrivals are read on each run.
@@ -323,7 +336,11 @@ The `synonyms` entries are what make natural-language querying work — a user a
 ## Pipeline Execution
 The transformation pipeline runs as a single Lakeflow job. Declaring table dependencies rather than execution order lets the platform derive the DAG and resolve the correct sequence automatically.
 
-![Pipeline](docs/images/pipeline.png)
+![Transformation pipeline](docs/images/ETL_Pipeline.png)
+
+The run view also surfaces the quality expectations in force on each table — two on accounts, five on opportunities, seven on the product catalogue, four on inventory — and flags violations. The 23 flagged records on transactions are rows failing a warn-level expectation: they are retained and visible rather than silently dropped.
+
+Note that `transactions` and `fact_sales` are materialised views while the other four are streaming tables, which is why the run reports a full recompute for `fact_sales` rather than an incremental update.
 
 ## Dashboard
 A three-page Databricks AI/BI dashboard reads the gold layer, with cross-filtering on product category, customer type, payment mode, and brand.
